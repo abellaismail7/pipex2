@@ -40,9 +40,10 @@ int	_exec(t_data *data, int index)
 	return (pid);
 }
 
-int	file2stdin(t_data *data)
+int	file2stdin(t_data *data, int fd)
 {
 	setupinput(data);
+	ft_dup2(fd, STDOUT_FILENO);
 	return (_exec(data, 0));
 }
 
@@ -81,6 +82,11 @@ int	stdout2file(t_data *data, int readend)
 	int	flags;
 
 	flags = O_WRONLY | O_TRUNC | O_CREAT;
+	if (data->until != NULL)
+	{
+		flags |= O_APPEND;
+		flags &= ~O_TRUNC;
+	}
 	fd = open(data->file_out, flags, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
 	if (fd == -1)
 	{
@@ -105,9 +111,13 @@ int	ft_exec(t_data *data)
 	pids = ft_ialloc(data->size, -1);
 	if (pids == NULL)
 		return (1);
-	ft_dup2(fildes[1], STDOUT_FILENO);
-	pids[0] = file2stdin(data);
+	pids[0] = file2stdin(data, fildes[1]);
 	fd = streamexec(data, pids, fildes[0]);
+	if (fd == -1)
+	{
+		free(pids);
+		return (1);
+	}
 	pids[data->size - 1] = stdout2file(data, fd);
 	status = get_statuscode(data, pids);
 	free(pids);

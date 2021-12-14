@@ -22,11 +22,6 @@ int	ft_strlen(const char *str)
 	return (count);
 }
 
-void	ft_putstrfd(int fd, char *str)
-{
-	write(fd, str, ft_strlen(str));
-}
-
 unsigned int	ft_strlcpy(char *dest, const char *src, unsigned int size)
 {
 	unsigned int	i;

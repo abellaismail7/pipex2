@@ -54,10 +54,8 @@ void	fake_input(int is_heredoc)
 	int	fildes[2];
 
 	if (is_heredoc || pipe(fildes) == -1)
-		exit(1);
-	if (dup2(fildes[0], STDIN_FILENO) == -1)
-		exit(1);
-	close(fildes[0]);
+		return ;
+	ft_dup2(fildes[0], STDIN_FILENO);
 	close(fildes[1]);
 }
 

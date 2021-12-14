@@ -31,7 +31,7 @@ char	**get_paths(char **env)
 
 char	*check_relativepath(char *cmd)
 {
-	int res;
+	int	res;
 
 	res = access(cmd, F_OK | X_OK);
 	if (res == -1)

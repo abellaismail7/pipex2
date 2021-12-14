@@ -21,6 +21,6 @@ char			*ft_strdup(char *src);
 void			ft_putstrfd(int fd, char *str);
 char			**ft_split(char *str, char c);
 int				free_split(char **result);
-int				show_error(char *basename, char* msg, int val);
+int				show_error(char *basename, char *msg, int val);
 
 #endif
