@@ -17,31 +17,33 @@
 #include "pipex.h"
 #include <fcntl.h>
 
-int _exec(t_data *data, int index)
+int	_exec(t_data *data, int index)
 {
-	int pid;
-	char ** args;
-	char *file;
+	int		pid;
+	char	**args;
+	char	*file;
 
-	args = ft_split(data->cmds[index],' ');
-	if(args == NULL)
-		return -1;
-	file = get_cmd_path(args[0], data->paths);
-	if (file == NULL && ft_free(args))
-		return -1;
 	pid = fork();
-	if(pid == 0)
+	if (pid == 0)
 	{
+		args = ft_split(data->cmds[index], ' ');
+		if (args == NULL)
+			exit(1);
+		file = get_cmd_path(args[0], data->paths);
+		if (file == NULL && ft_free(args))
+			exit(127);
 		execve(file, args, data->env);
+		free_split(args);
+		free(file);
 		exit(0);
 	}
-	return pid;
+	return (pid);
 }
 
-int file2stdin(t_data *data)
+int	file2stdin(t_data *data)
 {
 	setupinput(data);
-	return _exec(data, 0);
+	return (_exec(data, 0));
 }
 
 int	streamexec(t_data *data, int *pids, int fd_in)
@@ -51,8 +53,8 @@ int	streamexec(t_data *data, int *pids, int fd_in)
 	int	*fds;
 
 	fds = malloc(sizeof(int) * (data->size - 2));
-	if(fds == NULL)
-		return -1;
+	if (fds == NULL)
+		return (-1);
 	i = 1;
 	fdi = 0;
 	while (i < data->size - 1)
@@ -76,7 +78,7 @@ int	streamexec(t_data *data, int *pids, int fd_in)
 int	stdout2file(t_data *data, int readend)
 {
 	int	fd;
-	int flags;
+	int	flags;
 
 	flags = O_WRONLY | O_TRUNC | O_CREAT;
 	fd = open(data->file_out, flags, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
@@ -91,44 +93,23 @@ int	stdout2file(t_data *data, int readend)
 	return (_exec(data, data->size -1));
 }
 
-int	get_statuscode(t_data *data, int *pids)
+int	ft_exec(t_data *data)
 {
-	int	i;
+	int	*pids;
+	int	fildes[2];
+	int	fd;
 	int	status;
-
-	i = 0;
-	while (i < data->size)
-	{
-		if (pids[i] >= 0)
-			waitpid(pids[i], &status, 0);
-		i++;
-	}
-	if (pids[data->size - 1] == -1)
-		status = 127;
-	else if (!WIFEXITED(status))
-		status = 0;
-	else
-		status = WEXITSTATUS(status);
-	return (status);
-}
-
-int ft_exec(t_data *data)
-{
-	int * pids;
-	int fildes[2];
-	int fd;
-	int status;
 
 	if (pipe(fildes) == -1)
 		return (1);
 	pids = ft_ialloc(data->size, -1);
-	if(pids == NULL)
+	if (pids == NULL)
 		return (1);
 	ft_dup2(fildes[1], STDOUT_FILENO);
 	pids[0] = file2stdin(data);
 	fd = streamexec(data, pids, fildes[0]);
 	pids[data->size - 1] = stdout2file(data, fd);
-	status = get_statuscode(data, pids);	
+	status = get_statuscode(data, pids);
 	free(pids);
-	return status;
+	return (status);
 }

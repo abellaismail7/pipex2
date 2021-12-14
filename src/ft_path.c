@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "ft_str.h"
+#include "pipex.h"
 #include <unistd.h>
 #include <stdlib.h>
 
@@ -30,7 +31,12 @@ char	**get_paths(char **env)
 
 char	*check_relativepath(char *cmd)
 {
-	if (cmd[0] == '.' && access(cmd, F_OK | X_OK) == 0)
+	int res;
+
+	res = access(cmd, F_OK | X_OK);
+	if (res == -1)
+		show_errno("pipex", cmd);
+	if (res == 0)
 		return (ft_strdup(cmd));
 	return (NULL);
 }
@@ -60,14 +66,19 @@ char	*get_cmd_path(char *cmd, char **paths)
 {
 	char	*filename;
 
-	filename = check_relativepath(cmd);
-	if (filename == NULL)
-		filename = check_envpath(cmd, paths);
-	if (filename == NULL)
+	if (cmd[0] == '.')
 	{
-		ft_putstrfd(2, "pipex: command not found: ");
-		ft_putstrfd(2, cmd);
-		ft_putstrfd(2, "\n");
+		filename = check_relativepath(cmd);
+	}
+	else
+	{
+		filename = check_envpath(cmd, paths);
+		if (filename == NULL)
+		{
+			ft_putstrfd(2, "pipex: command not found: ");
+			ft_putstrfd(2, cmd);
+			ft_putstrfd(2, "\n");
+		}
 	}
 	return (filename);
 }

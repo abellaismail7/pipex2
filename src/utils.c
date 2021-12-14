@@ -18,28 +18,27 @@
 int	ft_dup2(int fd1, int fd2)
 {
 	int	res;
-	
+
 	res = dup2(fd1, fd2);
 	if (res == -1)
 	{
 		show_errno("pipex", "");
-		return res;
+		return (res);
 	}
 	close(fd1);
 	return (res);
 }
 
-int show_error(char *basename, char* msg, int val)
+int	show_error(char *basename, char *msg, int val)
 {
 	ft_putstrfd(2, basename);
 	ft_putstrfd(2, msg);
 	ft_putstrfd(2, "\n");
-	return val;
+	return (val);
 }
 
 int	*ft_ialloc(int size, int defval)
 {
-
 	int	*mem;
 
 	mem = (int *) malloc(sizeof(int) * size);
@@ -50,8 +49,27 @@ int	*ft_ialloc(int size, int defval)
 	return (mem);
 }
 
-int ft_free(void *ptr)
+int	ft_free(void *ptr)
 {
 	free(ptr);
 	return (1);
+}
+
+int	get_statuscode(t_data *data, int *pids)
+{
+	int	i;
+	int	status;
+
+	i = 0;
+	while (i < data->size)
+	{
+		if (pids[i] >= 0)
+			waitpid(pids[i], &status, 0);
+		i++;
+	}
+	if (!WIFEXITED(status))
+		status = 0;
+	else
+		status = WEXITSTATUS(status);
+	return (status);
 }

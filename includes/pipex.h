@@ -10,8 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef FT_PIPEX_H
-# define FT_PIPEX_H
+#ifndef PIPEX_H
+# define PIPEX_H
 
 # define HEREDOC "here_doc"
 # define HEREDOC_LEN 8
@@ -34,8 +34,9 @@ char	*get_cmd_path(char *cmd, char **paths);
 char	**get_paths(char **env);
 int		show_errno(char *basename, char *filename);
 int		ft_free(void *free);
-int	*ft_ialloc(int size, int defval);
-int	ft_dup2(int fd1, int fd2);
-int ft_exec(t_data *data);
+int		*ft_ialloc(int size, int defval);
+int		ft_dup2(int fd1, int fd2);
+int		ft_exec(t_data *data);
+int		get_statuscode(t_data *data, int *pids);
 
 #endif

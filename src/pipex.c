@@ -1,11 +1,23 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   pipex.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: iait-bel <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/12/14 15:47:21 by iait-bel          #+#    #+#             */
+/*   Updated: 2021/12/14 15:47:21 by iait-bel         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <stdlib.h>
 #include <unistd.h>
 #include "ft_str.h"
 #include "pipex.h"
 
-int setupdata(t_data *data, int ac, char **av)
+int	setupdata(t_data *data, int ac, char **av)
 {
-	int is_heredoc;
+	int	is_heredoc;
 
 	data->until = NULL;
 	is_heredoc = (ft_strncmp(av[1], HEREDOC, HEREDOC_LEN) == 0);
@@ -16,16 +28,16 @@ int setupdata(t_data *data, int ac, char **av)
 	data->file_out = av[ac - 1];
 	data->paths = get_paths(data->env);
 	if (data->paths == NULL)
-		return -1;
+		return (-1);
 	data->size = ac - 3 - is_heredoc;
 	data->cmds = av + 2 + is_heredoc;
-	return 0;
+	return (0);
 }
 
 int	main(int ac, char *av[], char **env)
 {
-	t_data data;
-	int status;
+	t_data	data;
+	int		status;
 
 	if (ac < 5)
 	{
@@ -35,9 +47,9 @@ int	main(int ac, char *av[], char **env)
 	}
 	data.env = env;
 	status = setupdata(&data, ac, av);
-	if(status == -1)
+	if (status == -1)
 		exit(1);
 	status = ft_exec(&data);
 	free(data.paths);
-	return status;
+	return (status);
 }
