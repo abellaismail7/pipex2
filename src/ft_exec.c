@@ -42,8 +42,12 @@ int	_exec(t_data *data, int index)
 
 int	file2stdin(t_data *data, int fd)
 {
-	setupinput(data);
+	int	res;
+
+	res = setupinput(data);
 	ft_dup2(fd, STDOUT_FILENO);
+	if (res == -1)
+		return (-1);
 	return (_exec(data, 0));
 }
 
@@ -60,19 +64,18 @@ int	streamexec(t_data *data, int *pids, int fd_in)
 	fdi = 0;
 	while (i < data->size - 1)
 	{
-		if (i == 1)
-			ft_dup2(fd_in, STDIN_FILENO);
-		else
-			ft_dup2(fds[fdi - 2], STDIN_FILENO);
+		assign_stdin(i, fd_in, fds[fdi - 2]);
 		if (pipe(fds + fdi) == -1 && ft_free(fds))
 			return (-1);
 		ft_dup2(fds[fdi + 1], STDOUT_FILENO);
 		pids[i] = _exec(data, i);
+		fd_in = fds[fdi];
 		if (i + 2 == data->size)
-			return (fds[fdi]);
+			break ;
 		fdi += 2;
 		i++;
 	}
+	free(fds);
 	return (fd_in);
 }
 

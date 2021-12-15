@@ -21,6 +21,14 @@ void	ft_putstr(int fd, char *str)
 	write(fd, str, ft_strlen(str));
 }
 
+void	assign_stdin(int i, int fd_in, int fdlast_in)
+{
+	if (i == 1)
+		ft_dup2(fd_in, STDIN_FILENO);
+	else
+		ft_dup2(fdlast_in, STDIN_FILENO);
+}
+
 int	readfromkeyboard(char *until)
 {
 	int		fildes[2];
@@ -59,7 +67,7 @@ void	fake_input(int is_heredoc)
 	close(fildes[1]);
 }
 
-void	setupinput(t_data *data)
+int	setupinput(t_data *data)
 {
 	int	fd_in;
 
@@ -74,4 +82,5 @@ void	setupinput(t_data *data)
 	}
 	else
 		ft_dup2(fd_in, STDIN_FILENO);
+	return (fd_in);
 }

@@ -42,6 +42,8 @@ int	*ft_ialloc(int size, int defval)
 	int	*mem;
 
 	mem = (int *) malloc(sizeof(int) * size);
+	if (mem == NULL)
+		return (NULL);
 	while (size--)
 	{
 		mem[size] = defval;

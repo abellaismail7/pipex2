@@ -50,6 +50,6 @@ int	main(int ac, char *av[], char **env)
 	if (status == -1)
 		exit(1);
 	status = ft_exec(&data);
-	free(data.paths);
+	free_split(data.paths);
 	return (status);
 }

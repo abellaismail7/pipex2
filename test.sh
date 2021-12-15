@@ -26,3 +26,6 @@ echo ">>> $pipetest urout"
 bash -c "$pipetest urout"; tput setaf 2; echo " ($?)"; tput sgr0;
 
 diff realout urout
+
+echo ">>>"
+cat urout

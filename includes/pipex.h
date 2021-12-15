@@ -28,7 +28,7 @@ typedef struct s_data
 	char	**env;
 }	t_data;
 
-void	setupinput(t_data *data);
+int		setupinput(t_data *data);
 void	die(char *basename, char *file);
 char	*get_cmd_path(char *cmd, char **paths);
 char	**get_paths(char **env);
@@ -38,5 +38,6 @@ int		*ft_ialloc(int size, int defval);
 int		ft_dup2(int fd1, int fd2);
 int		ft_exec(t_data *data);
 int		get_statuscode(t_data *data, int *pids);
+void	assign_stdin(int i, int fd_in, int fdlast_in);
 
 #endif
